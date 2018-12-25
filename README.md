@@ -31,12 +31,12 @@ class User
 end
 
 @user = User.new
-@user.set_google_secret           # => true
-@user.google_secret_value         # => 16-character plain-text secret, whatever the name of the secret column
-@user.google_qr_uri               # => http://path.to.google/qr?with=params
-@user.google_authentic?(123456)   # => true
-@user.clear_google_secret!        # => true
-@user.google_secret_value         # => nil
+@user.set_google_secret         # => true
+@user.google_secret_value       # => 16-character plain-text secret, whatever the name of the secret column
+@user.google_qr_uri             # => http://path.to.google/qr?with=params
+@user.google_authentic?(123456) # => true
+@user.clear_google_secret!      # => true
+@user.google_secret_value       # => nil
 ```
 
 ## Google Labels
@@ -56,29 +56,29 @@ class User
 end
 
 @user = User.new(:user_name => "ted")
-@user.google_label                      # => "ted"
+@user.google_label # => "ted"
 
 class User
-	acts_as_google_authenticated :method => :user_name_with_label
+  acts_as_google_authenticated :method => :user_name_with_label
 
-	def user_name_with_label
-	  "#{user_name}@example.com"
-	end
+  def user_name_with_label
+    "#{user_name}@example.com"
+  end
 end
 
 @user = User.new(:user_name => "ted")
-@user.google_label                    # => "ted@example.com"
+@user.google_label # => "ted@example.com"
 
 class User
-	acts_as_google_authenticated :method => Proc.new { |user| user.user_name_with_label.upcase }
+  acts_as_google_authenticated :method => Proc.new { |user| user.user_name_with_label.upcase }
 
-	def user_name_with_label
-	  "#{user_name}@example.com"
-	end
+  def user_name_with_label
+    "#{user_name}@example.com"
+  end
 end
 
 @user = User.new(:user_name => "ted")
-@user.google_label                    # => "TED@EXAMPLE.COM"
+@user.google_label # => "TED@EXAMPLE.COM"
 ```
 
 Here's what the labels look like in Google Authenticator for iPhone:
@@ -95,12 +95,12 @@ Example
 
 ```ruby
 class User
-	acts_as_google_authenticated :google_secret_column => :mfa_secret
+  acts_as_google_authenticated :google_secret_column => :mfa_secret
 end
 
 @user = User.new
 @user.set_google_secret
-@user.mfa_secret 		 # => "56ahi483"
+@user.mfa_secret # => "56ahi483"
 ```
 
 ## Drift
@@ -278,7 +278,6 @@ end
 # app/controllers/user_mfa_session_controller.rb
 
 class UserMfaSessionController < ApplicationController
-
   def new
     # load your view
   end
@@ -293,7 +292,6 @@ class UserMfaSessionController < ApplicationController
       render :new
     end
   end
-
 end
 ```
 
@@ -304,6 +302,7 @@ class ApplicationController < ActionController::Base
   before_filter :check_mfa
 
   private
+
   def check_mfa
      if !(user_mfa_session = UserMfaSession.find) && (user_mfa_session ? user_mfa_session.record == current_user : !user_mfa_session)
       redirect_to new_user_mfa_session_path
@@ -358,9 +357,10 @@ This may be reversed by running
 then by removing, or setting ```false```, the ```:encrypt_secrets``` option.
 
 If ```secret_key_base``` needs to change, set ```old_secret_key_base``` to the old key in ```config/secrets.yml``` before generating the new key.
+
 Then run
 ```bash
-  rails google_authenticator:reencrypt_secrets
+rails google_authenticator:reencrypt_secrets
 ```
 to change all encrypted google secret fields to use the new key.
 
